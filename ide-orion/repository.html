@@ -90,9 +90,18 @@
 				var startup = function() {
 					codeEdit.create({parent: "embeddedEditor"}).then(function(editorViewer) {
 						orionEditor = editorViewer.editor;
+						editorViewer.inputManager.setAutoSaveTimeout(-1);
+						editorViewer.editor.addEventListener("InputChanged", function(evt) {
+					        if(evt.contentsSaved) {
+					        	var text = editorViewer.editor.getTextView().getText();
+						    	saveContents(text);
+							} else {
+								messageHub.post({data: file}, 'editor.file.dirty');
+							}
+					    });
 						editorViewer.setContents(contents, mode);
-						editorViewer.readonly = true;
-						editorViewer.editor.getTextView().setOptions({"readonly": true});
+						/* editorViewer.readonly = true;
+						editorViewer.editor.getTextView().setOptions({"readonly": true}); */
 					});
 					
 				};
@@ -107,6 +116,31 @@
 					});
 				});
 			};
+		</script>
+		
+		<script>
+			var messageHub = new FramesMessageHub();
+		
+			function saveContents(text) {
+				console.log('Save called...');
+				if (file) {
+					var xhr = new XMLHttpRequest();
+					xhr.open('PUT', '/services/v3/core/repository' + file);
+					xhr.onreadystatechange = function() {
+						if (xhr.readyState == 4) {
+							console.log('file saved: ' + file);
+						}
+					}
+					xhr.send(text);
+					messageHub.post({data: file}, 'editor.file.saved');
+				} else {
+					console.error('file parameter is not present in the request');
+				}
+			}
+			
+			messageHub.subscribe(function() {
+				saveContents(orionEditor.getText());
+			}, 'workbench.editor.save');
 		</script>
 		
     </head>
