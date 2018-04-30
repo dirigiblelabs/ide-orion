@@ -168,9 +168,9 @@
 				saveContents(orionEditor.getText());
 			}, 'workbench.editor.save');
 			
-			messageHub.subscribe(function(data) {
-				if (data.file === file) {
-					setDebugRow(data.row);	
+			messageHub.subscribe(function(event) {
+				if (event.data.file === file) {
+					setDebugRow(event.data.row);	
 				}
 			}, 'debugger.editor.line.set');
 		</script>
