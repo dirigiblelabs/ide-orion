@@ -6,7 +6,7 @@ Eclipse Orion Editor Plugin for the [Eclipse Dirigible](https://github.com/eclip
 
 Build the [Eclipse Dirigible](https://github.com/eclipse/dirigible), deploy on e.g. Tomcat Web Container and go to location:
 
-> http://localhost:8080/services/v3/web/ide-orion/editor.html
+> http://localhost:8080/services/v4/web/ide-orion/editor.html
 
 ## License
 
